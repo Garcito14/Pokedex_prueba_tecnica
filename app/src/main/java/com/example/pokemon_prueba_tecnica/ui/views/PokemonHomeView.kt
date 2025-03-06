@@ -16,11 +16,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -45,18 +48,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.pokemon_prueba_tecnica.R
 import com.example.pokemon_prueba_tecnica.data.models.PokemonResults
-import com.example.pokemon_prueba_tecnica.ui.utils.PageButton
+import com.example.pokemon_prueba_tecnica.ui.utils.CButton
+
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,17 +171,37 @@ fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: Nav
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    PageButton(
+                    CButton(
                         text = "Page -",
                         onClick = { pokemonViewModel.previousPage() },
                         enabled = previousPage != null
                     )
 
-                    PageButton(
+                    CButton(
                         text = "Page +",
                         onClick = { pokemonViewModel.nextPage() },
                         enabled = nextPage != null
                     )
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Spacer(Modifier.width(10.dp))
+                    CButton(
+                        text = "Pokemon Guardados",
+                        onClick = { navController.navigate("saved_pokemon") },
+                        enabled = true
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    CButton(
+                        text = "Pokemon Favoritos",
+                        onClick = { navController.navigate("pokemon_favorites") },
+                        enabled = true
+                    )
+
                 }
 
             }
@@ -223,4 +249,78 @@ fun PokemonItem(pokemon: PokemonResults, navController: NavController, pokemonVi
     }
 
 
+}
+
+
+@Composable
+fun SavedPokemonView(viewModel: PokemonListViewModel, navController: NavController) {
+    val savedPokemon by viewModel.savedPokemon.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getSavedPokemon()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.pokebola_fondo),
+            contentDescription = "Fondo de Pokebola",
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {},
+            contentScale = ContentScale.Crop
+        )
+
+
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(top = 20.dp, start = 16.dp)
+                .align(Alignment.TopStart)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Volver",
+                tint = Color.White,
+                modifier = Modifier.size(45.dp)
+            )
+        }
+
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 80.dp)
+        ) {
+            items(savedPokemon) { pokemon ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                    ,
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = pokemon.name,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

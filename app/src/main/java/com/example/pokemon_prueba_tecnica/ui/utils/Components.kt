@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PageButton(text: String, onClick: () -> Unit, enabled: Boolean) {
+fun CButton(text: String, onClick: () -> Unit, enabled: Boolean) {
     Button(
         onClick = onClick,
         enabled = enabled,

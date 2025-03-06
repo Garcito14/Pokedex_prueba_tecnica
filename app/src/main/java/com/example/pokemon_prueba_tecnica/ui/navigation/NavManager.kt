@@ -7,17 +7,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.pokemon_prueba_tecnica.ui.viewmodels.FavoritePokemonViewModel
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonDetailViewModel
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
 import com.example.pokemon_prueba_tecnica.ui.views.PokemonDetailView
+import com.example.pokemon_prueba_tecnica.ui.views.PokemonFavoritesScreen
 import com.example.pokemon_prueba_tecnica.ui.views.PokemonListScreen
+import com.example.pokemon_prueba_tecnica.ui.views.SavedPokemonView
 
 @Composable
 fun NavManager(
     navController: NavController,
     pokemonViewModel: PokemonListViewModel,
     pokemonDetailViewModel: PokemonDetailViewModel,
-
+    favoritePokemonViewModel:FavoritePokemonViewModel
 
     ) {
 
@@ -44,6 +47,14 @@ fun NavManager(
                     id = it
                 )
             }
+        }
+
+        composable("pokemon_favorites") {
+            PokemonFavoritesScreen(pokemonViewModel,favoritePokemonViewModel, navController)
+        }
+
+        composable("saved_pokemon") {
+            SavedPokemonView(pokemonViewModel,navController)
         }
     }
 }
