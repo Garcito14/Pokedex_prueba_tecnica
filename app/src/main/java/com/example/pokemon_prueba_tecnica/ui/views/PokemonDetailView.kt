@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -54,6 +56,10 @@ fun PokemonDetailView(pokemonDetailViewModel: PokemonDetailViewModel, navControl
     val isFavorite by pokemonDetailViewModel.isFavorite.collectAsState()
     val flavorText = state.speciesDetail?.flavor_text_entries
         ?.firstOrNull { it.language.name == "es" }?.flavor_text ?: "Sin descripción"
+
+
+
+
     val context = LocalContext.current
     LaunchedEffect(id) {
         pokemonDetailViewModel.getPokemonDetail(id)
@@ -62,7 +68,7 @@ fun PokemonDetailView(pokemonDetailViewModel: PokemonDetailViewModel, navControl
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.poke_fondo_2),
-            contentDescription = "Fondo de Pokémon",
+            contentDescription = "Fondo de Pokemon",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -96,6 +102,29 @@ fun PokemonDetailView(pokemonDetailViewModel: PokemonDetailViewModel, navControl
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxSize()
                     ) {
+
+                        Row(
+                            modifier = Modifier.padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            detail.types.forEach { tipo ->
+                                val color = getPokemonTypeColor(tipo.type.name)
+
+                                Box(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .background(color, shape = RoundedCornerShape(8.dp))
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = tipo.type.name.capitalize(),
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
                         Text(
                             text = detail.name.capitalize(),
                             style = TextStyle(fontSize = 40.sp, fontWeight = FontWeight.Bold, color = Color.White)
@@ -124,6 +153,8 @@ fun PokemonDetailView(pokemonDetailViewModel: PokemonDetailViewModel, navControl
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }
+
+
                     }
 
 
@@ -241,5 +272,30 @@ fun SpriteCarrusel(sprites: List<String>) {
             color = Color.White,
             modifier = Modifier.padding(top = 8.dp)
         )
+    }
+}
+
+
+fun getPokemonTypeColor(type: String): Color {
+    return when (type.lowercase()) {
+        "normal" -> Color(0xFFA8A77A)
+        "fighting" -> Color(0xFFC22E28)
+        "flying" -> Color(0xFFA98FF3)
+        "poison" -> Color(0xFFA33EA1)
+        "ground" -> Color(0xFFE2BF65)
+        "rock" -> Color(0xFFB6A136)
+        "bug" -> Color(0xFFA6B91A)
+        "ghost" -> Color(0xFF735797)
+        "steel" -> Color(0xFFB7B7CE)
+        "fire" -> Color(0xFFEE8130)
+        "water" -> Color(0xFF6390F0)
+        "grass" -> Color(0xFF7AC74C)
+        "electric" -> Color(0xFFF7D02C)
+        "psychic" -> Color(0xFFF95587)
+        "ice" -> Color(0xFF96D9D6)
+        "dragon" -> Color(0xFF6F35FC)
+        "dark" -> Color(0xFF705746)
+        "fairy" -> Color(0xFFD685AD)
+        else -> Color.Gray
     }
 }

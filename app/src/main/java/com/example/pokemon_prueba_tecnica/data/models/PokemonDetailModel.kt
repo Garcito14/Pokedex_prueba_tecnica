@@ -3,7 +3,8 @@ package com.example.pokemon_prueba_tecnica.data.models
 data class PokemonDetailModel(
     val name: String,
     val sprites: Sprites,
-    val pokemonSpeciesModel: PokemonSpeciesModel? = null
+    val pokemonSpeciesModel: PokemonSpeciesModel? = null,
+    val types: List<PokemonTypeWrapper>,
 )
 
 
@@ -24,5 +25,15 @@ data class FlavorTextEntry(
 )
 
 data class Language(
+    val name: String
+)
+
+
+
+data class PokemonTypeWrapper(
+    val type: PokemonType
+)
+
+data class PokemonType(
     val name: String
 )
