@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +38,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,6 +65,7 @@ import coil.compose.rememberImagePainter
 import com.example.pokemon_prueba_tecnica.R
 import com.example.pokemon_prueba_tecnica.data.models.PokemonResults
 import com.example.pokemon_prueba_tecnica.ui.utils.CButton
+import com.example.pokemon_prueba_tecnica.ui.utils.isNetworkAvailable
 
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
 
@@ -77,9 +81,14 @@ fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: Nav
     var isSearchVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(true) {
-
+        if (!isNetworkAvailable(context)) {
+            Toast.makeText(context, "No hay conexión a Internet, puede ver sus busquedas guardadas", Toast.LENGTH_SHORT).show()
+        }
         pokemonViewModel.getPokemonList()
     }
+
+
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         Image(
@@ -111,7 +120,14 @@ fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: Nav
                         , modifier = Modifier.size(40.dp)
                     )
                 }
-
+                IconButton(onClick = { pokemonViewModel.getPokemonList() }) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refrescar lista",
+                        tint = Color(0xFFf6ff3f),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
 
                 if (isSearchVisible) {
                     OutlinedTextField(

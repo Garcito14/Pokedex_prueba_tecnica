@@ -32,6 +32,8 @@ class PokemonListViewModel @Inject constructor(
     private val _savedPokemon = MutableStateFlow<List<SavedPokemonEntity>>(emptyList())
     val savedPokemon: StateFlow<List<SavedPokemonEntity>> = _savedPokemon
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     private var offset = 0
 
@@ -53,13 +55,17 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+
+
     fun getPokemonList() {
         viewModelScope.launch {
+            _isLoading.value = true
             repository.getPokemonList(20, offset).onSuccess {
                 _pokemonList.value = it.results
                 _nextPage.value = it.next
                 _previousPage.value = it.previous
             }
+            _isLoading.value = false
         }
     }
     fun searchPokemon(query: String) {
