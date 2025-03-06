@@ -7,17 +7,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonDetailViewModel
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
+import com.example.pokemon_prueba_tecnica.ui.views.PokemonDetailView
 import com.example.pokemon_prueba_tecnica.ui.views.PokemonListScreen
 
 @Composable
 fun NavManager(
     navController: NavController,
     pokemonViewModel: PokemonListViewModel,
+    pokemonDetailViewModel: PokemonDetailViewModel,
 
 
-
-) {
+    ) {
 
     val navController = rememberNavController()
 
@@ -30,5 +32,18 @@ fun NavManager(
         }
 
 
+        composable(
+            route = "pokemon_detail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            id?.let {
+                PokemonDetailView(
+                    navController = navController,
+                    pokemonDetailViewModel = pokemonDetailViewModel,
+                    id = it
+                )
+            }
+        }
     }
 }

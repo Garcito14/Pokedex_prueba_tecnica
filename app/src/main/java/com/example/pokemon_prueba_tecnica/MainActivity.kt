@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.pokemon_prueba_tecnica.ui.navigation.NavManager
 import com.example.pokemon_prueba_tecnica.ui.theme.Pokemon_Prueba_TecnicaTheme
+import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonDetailViewModel
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,12 +26,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val pokemonListViewModel: PokemonListViewModel by viewModels()
+        val pokemonDetailModel: PokemonDetailViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
             Pokemon_Prueba_TecnicaTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
-                    NavManager(navController = navController,pokemonListViewModel)
+                    NavManager(navController = navController,pokemonListViewModel,pokemonDetailModel)
 
                 }
             }
