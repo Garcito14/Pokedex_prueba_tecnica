@@ -1,6 +1,7 @@
 package com.example.pokemon_prueba_tecnica.ui.views
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,12 +24,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -50,8 +56,10 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.pokemon_prueba_tecnica.R
 import com.example.pokemon_prueba_tecnica.data.models.PokemonResults
+import com.example.pokemon_prueba_tecnica.ui.utils.PageButton
 import com.example.pokemon_prueba_tecnica.ui.viewmodels.PokemonListViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: NavController) {
     val pokemonList by pokemonViewModel.pokemonList.collectAsState()
@@ -84,55 +92,59 @@ fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: Nav
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Pokédex",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
+
 
                 IconButton(onClick = { isSearchVisible = !isSearchVisible }) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Buscar",
-                        tint = Color.White
+                        tint = Color(0xFFf6ff3f)
+                        , modifier = Modifier.size(40.dp)
+                    )
+                }
+
+
+                if (isSearchVisible) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = {
+                            searchQuery = it
+                            pokemonViewModel.searchPokemon(it)
+                        },
+                        label = {
+                            Text(
+                                "Buscar Pokémon",
+                                style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.DarkGray),
+                        singleLine = true,
+                        textStyle = TextStyle(color = Color.White),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color.Yellow,
+                            unfocusedBorderColor = Color.White,
+                            cursorColor = Color.White
+                        ),
+
+                        trailingIcon = {
+                            IconButton(onClick = { isSearchVisible = false }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close",
+                                    tint = Color.White
+                                )
+                            }
+                        }
                     )
                 }
             }
-
-
-            if (isSearchVisible) {
-                TextField(
-                    value = searchQuery,
-                    onValueChange = {
-                        searchQuery = it
-                        pokemonViewModel.searchPokemon(it)
-                    },
-                    label = { Text("Buscar Pokemon", color = Color.Black) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Transparent, shape = RoundedCornerShape(20.dp)),
-                    singleLine = true,
-                    textStyle = TextStyle(color = Color.Black),
-
-                    trailingIcon = {
-                        IconButton(
-
-                            onClick = { isSearchVisible = false }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Cerrar búsqueda",
-                                tint = Color.White,
-
-                                )
-                        }
-                    }
-                )
-            }
-
             Spacer(modifier = Modifier.height(8.dp))
 
             val displayList = if (searchQuery.isEmpty()) pokemonList else searchResults ?: emptyList()
@@ -153,21 +165,17 @@ fun PokemonListScreen(pokemonViewModel: PokemonListViewModel, navController: Nav
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Button(
+                    PageButton(
+                        text = "Page -",
                         onClick = { pokemonViewModel.previousPage() },
                         enabled = previousPage != null
-                    ) {
-                        Text("Pag - ")
-                    }
+                    )
 
-
-
-                    Button(
+                    PageButton(
+                        text = "Page +",
                         onClick = { pokemonViewModel.nextPage() },
                         enabled = nextPage != null
-                    ) {
-                        Text("Pag +")
-                    }
+                    )
                 }
 
             }

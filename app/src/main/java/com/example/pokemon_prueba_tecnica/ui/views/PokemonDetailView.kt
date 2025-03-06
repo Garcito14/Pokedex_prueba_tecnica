@@ -163,7 +163,7 @@ fun PokemonDetailView(pokemonDetailViewModel: PokemonDetailViewModel, navControl
                                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Favorito",
                                     tint = if (isFavorite) Color.Red else Color.White,
-                                    modifier = Modifier.size(45.dp)
+                                    modifier = Modifier.size(80.dp)
                                 )
                             }
 
